@@ -1,0 +1,63 @@
+@import "bourbon/bourbon";
+@import "neat/neat";
+@import url('http://fonts.googleapis.com/css?family=Raleway:400,100,200,300');
+
+body {
+	font-family: 'Raleway', sans-serif;
+}
+
+.container {
+	text-align: center;
+}
+
+h1 {
+	font-weight: 100;
+}
+
+.card {
+	position: relative;
+	margin-top: rem(300);
+	
+	text-align: left;
+	
+	.btn {
+		margin-bottom: rem(10);
+		width: rem(300);
+		text-align: center;
+		position: relative;
+		padding: 10px 20px 10px 20px;
+		border: rem(1) solid black;
+		font-weight: 300;
+		font-size: rem(20);
+		border: 1px solid black;
+	}
+
+	.btn:hover {
+		background: #dbdbdb;
+	}
+
+}
+
+.index.ng-leave {
+	@include animation(fadeOut 2s ease-out);
+}
+
+
+@include keyframes(fadeIn) {
+	from {
+		opacity: 0;
+	}
+	 to {
+	 	opacity: 1;
+	 }
+}
+
+@include keyframes(fadeOut) {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
