@@ -44,4 +44,5 @@ gulp.task('watch', function() {
 	gulp.watch('source/javascript/**/*.js', ['jshint', 'build-js']);
 	gulp.watch('source/scss/**/*.scss', ['build-css']);
 	gulp.watch('source/**/*.html', ['copyHtml']);
+	gulp.watch('source/**/*.json', ['copyHtml']);
 });

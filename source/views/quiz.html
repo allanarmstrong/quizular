@@ -4,9 +4,9 @@
 		<h3>{{question.question}}</h3>
 	 </div>
 	<div class="col-md-4">
-		<div class="btn" ng-repeat="answer in question.answers" ng-click="checkAnswer($index)">
+		<div class="btn" ng-repeat="answer in answers track by $index" ng-click="checkAnswer($index)">
 			{{answer}} <span class="glyphicon glyphicon-ok text-success" ng-show="correct == $index"></span><span class="glyphicon glyphicon-remove text-warning" ng-show="incorrect == $index"></span>
 
 		</div>
 	</div>
-</div>
+</div> 

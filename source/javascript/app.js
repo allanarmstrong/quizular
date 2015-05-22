@@ -23,7 +23,7 @@ var app = angular.module('quizularApp', ['ngRoute', 'ngAnimate'])
 }]); 
 
 
-app.controller('IndexController', ['$scope','$location','UserService', function($scope, $location, UserService) {
+app.controller('IndexController', ['$scope','$location','UserService', 'QuestionService', function($scope, $location, UserService, QuestionService) {
 
 	var user = UserService;
 
@@ -34,7 +34,7 @@ app.controller('IndexController', ['$scope','$location','UserService', function(
 
 }]);
 
-app.controller('WelcomeController', ['$scope', '$location', 'UserService', function($scope, $location, UserService) {
+app.controller('WelcomeController', ['$scope', '$location', 'UserService', 'QuestionService', function($scope, $location, UserService, QuestionService) {
 
 	if (UserService.getUser() === null) {
 		$scope.username = "Unknown User!";
@@ -42,8 +42,11 @@ app.controller('WelcomeController', ['$scope', '$location', 'UserService', funct
 		$scope.username = UserService.getUser();
 	}
 
+	QuestionService.getQuestions();// //Load the questions.
+
 	$scope.beginQuiz = function() {
 		console.log("Button Pressed!");
+
 		$location.path('/quiz');
 	};
 
@@ -53,10 +56,12 @@ app.controller('QuizController', ['$scope', '$timeout', '$location', 'QuestionSe
 
 	//Initial variables blah blah blah
 	$scope.score = 0;
-	$scope.user = UserService.getUser();
+	
+	$scope.user = UserService.getUser();//Get the user information.
 	//var questionIndex = -1;
 	$scope.questionNum = 1;
 	$scope.question = QuestionService.getQuestion($scope.questionNum-1);
+	$scope.answers = QuestionService.shuffleAnswers($scope.question.answers);
 	$scope.numQuestions = QuestionService.getNumQuestions();
 	$scope.correct = null;
 	$scope.incorrect = null;
@@ -66,13 +71,14 @@ app.controller('QuizController', ['$scope', '$timeout', '$location', 'QuestionSe
 		if ($scope.questionNum < QuestionService.getNumQuestions()) { //If there's still questions left then get them ready and display them
 			//questionIndex += 1;
 			$scope.question = QuestionService.getQuestion($scope.questionNum-1);
+			$scope.answers = QuestionService.shuffleAnswers($scope.question.answers);
 			$scope.questionNum += 1;
 			$scope.correct = null;
 			$scope.incorrect = null;
 		} else {
 			$location.path('/results');
 		}
-	};
+	}; 
 
 	$scope.checkAnswer = function(index) {
 		if ($scope.question.answers[index] === $scope.question.correct) {
@@ -132,28 +138,17 @@ app.service('UserService', [function () {
 	
 }]);
 
-app.service('QuestionService', [function () {
+app.service('QuestionService', [ '$http', function($http) {
 
-	var questions = [
-	{
-		question: "This is a question 1",
-		correct: "This is an answer",
-		answers: ["Answer A", "This is an Answer", "This is an answer", "this is an answer"]
-	},
-	{
-		question: "This is a question 2",
-		correct: "This is not an answer",
-		answers: ["Answer A", "This is an Answer", "This is not an answer", "this is an answer"]
-	},
-	{
-		question: "This is a question 3",
-		correct: "This is an answer",
-		answers: ["Answer A", "This is an Answer", "This is an answer", "this is an answer"]
-	}];
-
+	var questions;
+ 
 	return {
 		getQuestions: function() {
-			return questions;
+			$http.get('questions.json')
+			.success(function(data) {
+				questions = data.questions;
+				console.log(questions);
+			});
 		},
 
 		getQuestion: function(index) {
@@ -162,6 +157,17 @@ app.service('QuestionService', [function () {
 
 		getNumQuestions: function() {
 			return questions.length;
+		},
+
+		shuffleAnswers: function(arr) {
+			for (var i = arr.length - 1; i>0; i--) {
+				var j = Math.floor(Math.random() * (i + 1));
+				var tmp = arr[i];
+				arr[i] = arr[j];
+				arr[j] = tmp;
+			}
+
+			return arr;
 		}
 	};
 	
